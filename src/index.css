@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --font-nanum: "Nanum Myeongjo", serif;
+}
+
+@layer base {
+  body {
+    @apply font-nanum bg-slate-100 text-slate-900;
+  }
+}
+
+/* Custom CSS for Worksheet Grid */
+.cell-cross {
+  position: relative;
+}
+
+.cell-cross::before, .cell-cross::after {
+  content: '';
+  position: absolute;
+  background-color: transparent;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cell-cross::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  border-top: 1px dashed rgba(0, 0, 255, 0.2);
+  transform: translateY(-50%);
+}
+
+.cell-cross::after {
+  left: 50%;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  border-left: 1px dashed rgba(0, 0, 255, 0.2);
+  transform: translateX(-50%);
+}
+
+.guide-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.8;
+  background-size: 110%;
+  background-repeat: no-repeat;
+}
+
+/* Type 1: < (Vertical Vowel) */
+.guide-type-1 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M70 20 L30 50 L70 80' fill='none' stroke='rgba(255,0,0,0.5)' stroke-width='4'/%3E%3C/svg%3E");
+  background-position: 40% center;
+}
+
+/* Type 2: ^ (Horizontal Vowel) */
+.guide-type-2 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20 70 L50 30 L80 70' fill='none' stroke='rgba(255,0,0,0.5)' stroke-width='4'/%3E%3C/svg%3E");
+  background-position: center 40%;
+}
+
+/* Type 3: ◇ (Deep Horizontal: ㅜ, ㅠ) */
+.guide-type-3 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,15 85,50 50,85 15,50' fill='none' stroke='rgba(255,0,0,0.5)' stroke-width='4'/%3E%3C/svg%3E");
+  background-position: center center;
+}
+
+/* Type 4: polygon for patchim from design HTML */
+.guide-type-4 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='25,35 75,15 75,85 25,65' fill='none' stroke='rgba(255,0,0,0.5)' stroke-width='4'/%3E%3C/svg%3E");
+  background-position: center center;
+}
+
+/* Print optimizations */
+@media print {
+  @page {
+    size: A4;
+    margin: 4mm auto;
+  }
+  
+  body, html {
+    background: white !important;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .worksheet-area {
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    transform: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .worksheet-grid {
+    margin: 0 auto;
+  }
+  
+  /* Force colors to print correctly in WebKit browsers */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .char-text {
+    color: #cbd5e1 !important;
+  }
+  
+  .bg-white {
+    background-color: transparent !important;
+  }
+}
+

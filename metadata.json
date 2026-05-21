@@ -1,0 +1,6 @@
+{
+  "name": "Hangul Worksheet",
+  "description": "A web application for generating printable Korean handwriting practice worksheets with structured stroke guides.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
