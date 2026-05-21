@@ -128,6 +128,7 @@ const langStrs = {
     placeholder: "연습할 내용을 입력하거나 예문을 선택하세요.",
     btnGenerate: "연습장 생성",
     btnGuide: "모양 가이드 켜기/끄기",
+    btnBold: "글씨 진하기 켜기/끄기",
     btnPrint: "인쇄하기",
     guideTitle: "가이드 안내:",
     guideType1: "세로 모음 (받침 없음)",
@@ -146,6 +147,7 @@ const langStrs = {
     placeholder: "Enter practice text or select an example.",
     btnGenerate: "Generate Worksheet",
     btnGuide: "Toggle Shape Guides",
+    btnBold: "Toggle Text Thickness",
     btnPrint: "Print Worksheet",
     guideTitle: "Guide Types:",
     guideType1: "Vertical (No Patchim)",
@@ -209,6 +211,7 @@ export default function App() {
   const [inputText, setInputText] = useState("");
   const [displayedText, setDisplayedText] = useState("");
   const [showGuides, setShowGuides] = useState(false);
+  const [isBold, setIsBold] = useState(false);
   const [selectedExample, setSelectedExample] = useState("");
   const cellSize = 10;
   
@@ -337,9 +340,19 @@ export default function App() {
               </button>
               <button 
                 onClick={() => setShowGuides(!showGuides)}
-                className="w-full py-2 bg-slate-100 text-slate-700 border border-slate-200 rounded font-medium text-sm transition-colors hover:bg-slate-200"
+                className={`w-full py-2 border rounded font-medium text-sm transition-colors ${
+                  showGuides ? 'bg-slate-700 text-white border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                }`}
               >
                 {t.btnGuide}
+              </button>
+              <button 
+                onClick={() => setIsBold(!isBold)}
+                className={`w-full py-2 border rounded font-medium text-sm transition-colors ${
+                  isBold ? 'bg-slate-700 text-white border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+                }`}
+              >
+                {t.btnBold}
               </button>
             </div>
 
@@ -468,7 +481,7 @@ export default function App() {
                       borderColor: `rgba(226, 232, 240, ${borderOpacity / 100})` // slate-200
                     }}
                   >
-                    <span className={`char-text text-[24px] z-10 text-[#cbd5e1] leading-none ${selectedFont}`}>
+                    <span className={`char-text text-[24px] z-10 text-[#cbd5e1] leading-none ${selectedFont} ${isBold ? 'font-bold' : 'font-normal'}`}>
                       {char}
                     </span>
                     {guideType !== null && showGuides && (
