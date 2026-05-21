@@ -10,6 +10,61 @@
   }
 }
 
+/* Font classes */
+@font-face {
+  font-family: 'HangeulNuri';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.0/HangeulNuri-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'KyoboHand';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-nanum-myeongjo {
+  font-family: 'Nanum Myeongjo', serif;
+}
+
+.font-nanum-gothic {
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+.font-nanum-pen {
+  font-family: 'Nanum Barun Pen', sans-serif;
+}
+
+.font-maru-buri {
+  font-family: 'Maru Buri', serif;
+}
+
+.font-hangeul-nuri {
+  font-family: 'HangeulNuri', sans-serif;
+}
+
+.font-kyobo-hand {
+  font-family: 'KyoboHand', sans-serif;
+}
+
+.font-diphylleia {
+  font-family: 'Diphylleia', serif;
+}
+
+.font-gaegu {
+  font-family: 'Gaegu', cursive;
+}
+
+.font-grandiflora-one {
+  font-family: 'Grandiflora One', cursive;
+}
+
+.font-nanum-pen-script {
+  font-family: 'Nanum Pen Script', cursive;
+}
+
 /* Custom CSS for Worksheet Grid */
 .cell-cross {
   position: relative;
