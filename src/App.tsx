@@ -30,32 +30,34 @@ const langStrs = {
     langToggle: "English",
     exampleLabel: "예문 선택:",
     optionCustom: "-- 직접 입력 --",
-    textLabel: "텍스트 입력 (최대 160자):",
+    textLabel: "텍스트 입력",
     placeholder: "연습할 내용을 입력하거나 예문을 선택하세요.",
     btnGenerate: "연습장 생성",
     btnGuide: "모양 가이드 켜기/끄기",
     btnPrint: "인쇄하기",
     guideTitle: "가이드 안내:",
-    guideType1: "세로 모음",
-    guideType2: "가로 모음",
-    guideType3: "ㅜ, ㅠ",
-    guideType4: "받침 있음",
+    guideType1: "세로 모음 (받침 없음)",
+    guideType2: "가로 모음 (받침 없음)",
+    guideType3: "가로 모음 (받침 있음)",
+    guideType4: "세로 모음 (받침 있음)",
+    cellSizeLabel: "칸 크기",
   },
   en: {
     title: "Hangul Handwriting Worksheet",
     langToggle: "한국어",
     exampleLabel: "Select Example:",
     optionCustom: "-- Custom Input --",
-    textLabel: "Enter Text (Max 160 chars):",
+    textLabel: "Enter Text",
     placeholder: "Enter practice text or select an example.",
     btnGenerate: "Generate Worksheet",
     btnGuide: "Toggle Shape Guides",
     btnPrint: "Print Worksheet",
     guideTitle: "Guide Types:",
-    guideType1: "Vertical Vowel",
-    guideType2: "Horizontal Vowel",
-    guideType3: "ㅜ, ㅠ",
-    guideType4: "With Patchim",
+    guideType1: "Vertical (No Patchim)",
+    guideType2: "Horizontal (No Patchim)",
+    guideType3: "Horizontal (With Patchim)",
+    guideType4: "Vertical (With Patchim)",
+    cellSizeLabel: "Cell Size",
   }
 };
 
@@ -67,14 +69,43 @@ function getGuideType(char: string): number | null {
   const jongIndex = baseCode % 28;
   const jungIndex = Math.floor((baseCode - jongIndex) / 28) % 21;
 
-  if (jongIndex > 0) return 4;
-  if ([13, 17].includes(jungIndex)) return 3; // ㅜ, ㅠ
-  if ([8, 12, 18].includes(jungIndex)) return 2; // ㅗ, ㅛ, ㅡ
+  const isHorizontalVowel = [8, 12, 13, 17, 18].includes(jungIndex); // ㅗ, ㅛ, ㅜ, ㅠ, ㅡ
+
+  if (jongIndex > 0) {
+    if (isHorizontalVowel) {
+      return 3; // Diamond for horizontal with patchim
+    }
+    return 4; // Trapezoid for vertical with patchim
+  }
+
+  if (isHorizontalVowel) return 2; // ^ for horizontal without patchim
   
   // Vertical and other complex vowels without patchim
-  if ([0, 1, 2, 3, 4, 5, 6, 7, 20, 9, 10, 11, 14, 15, 16, 19].includes(jungIndex)) return 1;
+  return 1; // <
+}
 
-  return null;
+function getGuideStyle(type: number, width: number, opacity: number): React.CSSProperties {
+  const stroke = `rgba(255,0,0,1)`; 
+  let svg = '';
+  let pos = 'center';
+  
+  if (type === 1) {
+    svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M70 20 L30 50 L70 80' fill='none' stroke='${stroke}' stroke-width='${width}'/></svg>`;
+    pos = '40% center';
+  } else if (type === 2) {
+    svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M20 70 L50 30 L80 70' fill='none' stroke='${stroke}' stroke-width='${width}'/></svg>`;
+    pos = 'center 40%';
+  } else if (type === 3) {
+    svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,15 85,50 50,85 15,50' fill='none' stroke='${stroke}' stroke-width='${width}'/></svg>`;
+  } else if (type === 4) {
+    svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='25,35 75,15 75,85 25,65' fill='none' stroke='${stroke}' stroke-width='${width}'/></svg>`;
+  }
+
+  return {
+    backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(svg)}")`,
+    opacity: opacity / 100,
+    backgroundPosition: pos
+  };
 }
 
 export default function App() {
@@ -83,6 +114,14 @@ export default function App() {
   const [displayedText, setDisplayedText] = useState("");
   const [showGuides, setShowGuides] = useState(false);
   const [selectedExample, setSelectedExample] = useState("");
+  const cellSize = 10;
+  
+  const [borderWidth, setBorderWidth] = useState(1);
+  const [borderOpacity, setBorderOpacity] = useState(100);
+  const [crossWidth, setCrossWidth] = useState(1);
+  const [crossOpacity, setCrossOpacity] = useState(20);
+  const [guideWidth, setGuideWidth] = useState(4);
+  const [guideOpacity, setGuideOpacity] = useState(80);
 
   const t = isEnglish ? langStrs.en : langStrs.ko;
 
@@ -99,6 +138,12 @@ export default function App() {
   const handleGenerate = () => {
     setDisplayedText(inputText);
   };
+
+  const printableWidth = 190; // mm (210 - margins)
+  const printableHeight = 277; // mm (297 - margins)
+  const cols = Math.floor(printableWidth / cellSize);
+  const rows = Math.floor(printableHeight / cellSize);
+  const totalCells = cols * rows;
 
   const cleanText = displayedText.replace(/\n/g, ' ');
   const chars = cleanText.split('');
@@ -147,12 +192,12 @@ export default function App() {
               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.textLabel}</label>
               <textarea 
                 value={inputText}
-                maxLength={160}
+                maxLength={totalCells}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={t.placeholder}
                 className="w-full h-32 p-3 text-sm border border-slate-200 rounded flex-shrink-0 focus:ring-2 focus:ring-blue-500 outline-none resize-none font-nanum leading-relaxed bg-slate-50"
               />
-              <p className="text-right text-[10px] text-slate-400 font-mono">{inputText.length} / 160</p>
+              <p className="text-right text-[10px] text-slate-400 font-mono">{inputText.length} / {totalCells}</p>
             </div>
 
             <div className="grid grid-cols-1 gap-2 pt-2">
@@ -183,6 +228,43 @@ export default function App() {
                 <span className="text-red-500 font-bold ml-1 text-xs">⬡</span> ({t.guideType4})
               </p>
             </div>
+
+            <div className="mt-4 border-t border-slate-200 pt-4 space-y-3 pb-2">
+              <p className="text-xs font-bold text-slate-500 uppercase">Style Adjustments (Temp)</p>
+              
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] text-slate-500">Border Width</label>
+                  <input type="range" min="0" max="5" step="0.5" value={borderWidth} onChange={(e) => setBorderWidth(Number(e.target.value))} className="w-1/2" />
+                </div>
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] text-slate-500">Border Opacity</label>
+                  <input type="range" min="0" max="100" value={borderOpacity} onChange={(e) => setBorderOpacity(Number(e.target.value))} className="w-1/2" />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] text-slate-500">Cross Width</label>
+                  <input type="range" min="0" max="5" step="0.5" value={crossWidth} onChange={(e) => setCrossWidth(Number(e.target.value))} className="w-1/2" />
+                </div>
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] text-slate-500">Cross Opacity</label>
+                  <input type="range" min="0" max="100" value={crossOpacity} onChange={(e) => setCrossOpacity(Number(e.target.value))} className="w-1/2" />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] text-slate-500">Guide Width</label>
+                  <input type="range" min="0" max="10" step="0.5" value={guideWidth} onChange={(e) => setGuideWidth(Number(e.target.value))} className="w-1/2" />
+                </div>
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] text-slate-500">Guide Opacity</label>
+                  <input type="range" min="0" max="100" value={guideOpacity} onChange={(e) => setGuideOpacity(Number(e.target.value))} className="w-1/2" />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="pt-4 border-t border-slate-100 mt-2 shrink-0">
@@ -203,26 +285,42 @@ export default function App() {
         <main className="flex-1 bg-slate-200 p-8 flex items-start justify-center overflow-auto print:overflow-visible print:bg-white print:p-0 print:block">
           <div className="worksheet-area bg-white p-[10mm] shadow-2xl flex flex-col items-center border border-slate-200 min-h-[297mm] w-[210mm] print:border-none print:shadow-none print:scale-100 print:w-full print:h-auto print:p-0">
             <div 
-              className="worksheet-grid grid border-l border-t border-slate-300"
+              className="worksheet-grid grid bg-white"
               style={{ 
-                gridTemplateColumns: 'repeat(10, 18mm)',
-                gridTemplateRows: 'repeat(16, 18mm)'
-              }}
+                gridTemplateColumns: `repeat(${cols}, ${cellSize}mm)`,
+                gridTemplateRows: `repeat(${rows}, ${cellSize}mm)`,
+                width: `${cols * cellSize}mm`,
+                height: `${rows * cellSize}mm`,
+                borderLeftWidth: `${borderWidth}px`,
+                borderTopWidth: `${borderWidth}px`,
+                borderStyle: 'solid',
+                borderColor: `rgba(203, 213, 225, ${borderOpacity / 100})`, // slate-300
+                '--cross-width': `${crossWidth}px`,
+                '--cross-opacity': crossOpacity / 100,
+              } as React.CSSProperties}
             >
-              {Array.from({ length: 160 }).map((_, i) => {
+              {Array.from({ length: totalCells }).map((_, i) => {
                 const char = i < chars.length ? chars[i] : "";
                 const guideType = char && showGuides ? getGuideType(char) : null;
                 
                 return (
                   <div 
                     key={i} 
-                    className="w-[18mm] h-[18mm] border-r border-b border-slate-200 cell-cross flex items-center justify-center relative bg-white"
+                    className="cell-cross flex items-center justify-center relative bg-white"
+                    style={{ 
+                      width: `${cellSize}mm`, 
+                      height: `${cellSize}mm`,
+                      borderRightWidth: `${borderWidth}px`,
+                      borderBottomWidth: `${borderWidth}px`,
+                      borderStyle: 'solid',
+                      borderColor: `rgba(226, 232, 240, ${borderOpacity / 100})` // slate-200
+                    }}
                   >
                     <span className="char-text text-[24px] font-serif z-10 text-[#cbd5e1] leading-none">
                       {char}
                     </span>
                     {guideType !== null && showGuides && (
-                      <div className={`guide-overlay guide-type-${guideType}`} />
+                      <div className="guide-overlay" style={getGuideStyle(guideType, guideWidth, guideOpacity)} />
                     )}
                   </div>
                 );
