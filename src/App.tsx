@@ -230,38 +230,62 @@ export default function App() {
             </div>
 
             <div className="mt-4 border-t border-slate-200 pt-4 space-y-3 pb-2">
-              <p className="text-xs font-bold text-slate-500 uppercase">Style Adjustments (Temp)</p>
+              <p className="text-xs font-bold text-slate-500 uppercase">Style Adjustments</p>
               
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] text-slate-500">Border Width</label>
-                  <input type="range" min="0" max="5" step="0.5" value={borderWidth} onChange={(e) => setBorderWidth(Number(e.target.value))} className="w-1/2" />
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={() => setBorderWidth(Math.max(0, borderWidth - 0.5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&lt;</button>
+                    <span className="text-[10px] font-mono w-6 text-center text-slate-600">{borderWidth}</span>
+                    <button onClick={() => setBorderWidth(Math.min(5, borderWidth + 0.5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&gt;</button>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] text-slate-500">Border Opacity</label>
-                  <input type="range" min="0" max="100" value={borderOpacity} onChange={(e) => setBorderOpacity(Number(e.target.value))} className="w-1/2" />
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={() => setBorderOpacity(Math.max(0, borderOpacity - 5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&lt;</button>
+                    <span className="text-[10px] font-mono w-6 text-center text-slate-600">{borderOpacity}</span>
+                    <button onClick={() => setBorderOpacity(Math.min(100, borderOpacity + 5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&gt;</button>
+                  </div>
                 </div>
               </div>
 
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] text-slate-500">Cross Width</label>
-                  <input type="range" min="0" max="5" step="0.5" value={crossWidth} onChange={(e) => setCrossWidth(Number(e.target.value))} className="w-1/2" />
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={() => setCrossWidth(Math.max(0, crossWidth - 0.5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&lt;</button>
+                    <span className="text-[10px] font-mono w-6 text-center text-slate-600">{crossWidth}</span>
+                    <button onClick={() => setCrossWidth(Math.min(5, crossWidth + 0.5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&gt;</button>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] text-slate-500">Cross Opacity</label>
-                  <input type="range" min="0" max="100" value={crossOpacity} onChange={(e) => setCrossOpacity(Number(e.target.value))} className="w-1/2" />
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={() => setCrossOpacity(Math.max(0, crossOpacity - 5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&lt;</button>
+                    <span className="text-[10px] font-mono w-6 text-center text-slate-600">{crossOpacity}</span>
+                    <button onClick={() => setCrossOpacity(Math.min(100, crossOpacity + 5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&gt;</button>
+                  </div>
                 </div>
               </div>
 
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] text-slate-500">Guide Width</label>
-                  <input type="range" min="0" max="10" step="0.5" value={guideWidth} onChange={(e) => setGuideWidth(Number(e.target.value))} className="w-1/2" />
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={() => setGuideWidth(Math.max(0, guideWidth - 0.5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&lt;</button>
+                    <span className="text-[10px] font-mono w-6 text-center text-slate-600">{guideWidth}</span>
+                    <button onClick={() => setGuideWidth(Math.min(10, guideWidth + 0.5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&gt;</button>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] text-slate-500">Guide Opacity</label>
-                  <input type="range" min="0" max="100" value={guideOpacity} onChange={(e) => setGuideOpacity(Number(e.target.value))} className="w-1/2" />
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={() => setGuideOpacity(Math.max(0, guideOpacity - 5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&lt;</button>
+                    <span className="text-[10px] font-mono w-6 text-center text-slate-600">{guideOpacity}</span>
+                    <button onClick={() => setGuideOpacity(Math.min(100, guideOpacity + 5))} className="w-5 h-5 flex items-center justify-center bg-slate-200 hover:bg-slate-300 rounded text-slate-600 font-bold text-[10px] transition-colors">&gt;</button>
+                  </div>
                 </div>
               </div>
             </div>
